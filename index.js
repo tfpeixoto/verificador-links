@@ -1,5 +1,6 @@
 const chalk = require('chalk');
 const fs = require('fs');
+const path = require('path');
 
 // Funcao
 function extraiLinks(texto) {
@@ -13,7 +14,7 @@ function extraiLinks(texto) {
     })
   }
 
-  return arrayResultados;
+  return arrayResultados.length === 0 ? 'Não há links' : arrayResultados;
 }
 
 // Funcao trata erro
@@ -27,11 +28,31 @@ async function pegaArquivo(caminhoDoArquivo) {
 
   try {
     const texto = await fs.promises.readFile(caminhoDoArquivo, encoding)
-    console.log(extraiLinks(texto))
+    return extraiLinks(texto)
   } catch (erro) {
     trataErro(erro);
   } finally {
     console.log('Programa finalizado')
   }
 }
-pegaArquivo('./arquivos/texto01.md');
+module.exports = pegaArquivo;
+
+// Funcao assincrona que pega diretorio
+async function pegaDiretorio(caminho) {
+  const encoding = 'utf-8';
+  const caminhoAbsoluto = path.join(__dirname, '', caminho);
+
+  try {
+    const arquivos = await fs.promises.readdir(caminhoAbsoluto, { encoding })
+    const result = await Promise.all(arquivos.map(async (arquivo) => {
+      const localArquivo = `${caminhoAbsoluto}/${arquivo}`;
+      const texto = await fs.promises.readFile(localArquivo, encoding);
+      return extraiLinks(texto);
+    }))
+
+    return result;
+  } catch (erro) {
+    trataErro(erro)
+  }
+}
+module.exports = pegaDiretorio;
