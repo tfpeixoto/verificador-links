@@ -2,7 +2,7 @@ const chalk = require('chalk');
 const fs = require('fs');
 const path = require('path');
 
-// Funcao
+// Funcao extrair links
 function extraiLinks(texto) {
   const regex = /\[([^\]]*)\]\((https?:\/\/[^$#\s]*.[^\s]*)\)/gm;
   const arrayResultados = [];
@@ -38,21 +38,21 @@ async function pegaArquivo(caminhoDoArquivo) {
 module.exports = pegaArquivo;
 
 // Funcao assincrona que pega diretorio
-async function pegaDiretorio(caminho) {
-  const encoding = 'utf-8';
-  const caminhoAbsoluto = path.join(__dirname, '', caminho);
+// async function pegaDiretorio(caminho) {
+//   const encoding = 'utf-8';
+//   const caminhoAbsoluto = path.join(__dirname, '', caminho);
 
-  try {
-    const arquivos = await fs.promises.readdir(caminhoAbsoluto, { encoding })
-    const result = await Promise.all(arquivos.map(async (arquivo) => {
-      const localArquivo = `${caminhoAbsoluto}/${arquivo}`;
-      const texto = await fs.promises.readFile(localArquivo, encoding);
-      return extraiLinks(texto);
-    }))
+//   try {
+//     const arquivos = await fs.promises.readdir(caminhoAbsoluto, { encoding })
+//     const result = await Promise.all(arquivos.map(async (arquivo) => {
+//       const localArquivo = `${caminhoAbsoluto}/${arquivo}`;
+//       const texto = await fs.promises.readFile(localArquivo, encoding);
+//       return extraiLinks(texto);
+//     }))
 
-    return result;
-  } catch (erro) {
-    trataErro(erro)
-  }
-}
-module.exports = pegaDiretorio;
+//     return result;
+//   } catch (erro) {
+//     trataErro(erro)
+//   }
+// }
+// module.exports = pegaDiretorio;
