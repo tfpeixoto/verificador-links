@@ -1,23 +1,40 @@
 const fetch = require('node-fetch')
 
+function manejaErro(erro) {
+  throw new Error(erro)
+}
+
 async function checaStatus(arrayURLs) {
-  const arrayStatus = await Promise.all(arrayURLs.map(async url => {
-    const response = await fetch(url)
+  try {
+    const arrayStatus = await Promise
+      .all(arrayURLs
+        .map(async url => {
+          const response = await fetch(url)
 
-    return response.status
-  }))
+          return `${response.status} - ${response.statusText}`
+        }))
 
-  return arrayStatus
+    return arrayStatus
+  } catch (erro) {
+    manejaErro(erro)
+  }
 }
 
 function geraArrayDeURLs(arrayLinks) {
-  return arrayLinks.map(objetoLink => Object.values(objetoLink).join())
+  return arrayLinks
+    .map(objetoLink => Object
+      .values(objetoLink).join())
 }
 
 async function validaURLs(arrayLinks) {
   const links = geraArrayDeURLs(arrayLinks)
   const statusLinks = await checaStatus(links)
 
-  return statusLinks
+  const resultado = arrayLinks.map((objeto, indice) => ({
+    ...objeto,
+    status: statusLinks[indice]
+  }))
+
+  return resultado
 }
 module.exports = validaURLs
