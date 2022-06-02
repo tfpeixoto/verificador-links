@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const chalk = require('chalk')
 const pegaArquivo = require('./index')
 // const pegaDiretorio = require('./index')
